@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffre-Fort Francophone</title>
+    <style>
+        :root {
+            --bg-color: #121629;
+            --card-bg: #1c223a;
+            --neon-green: #56ff8a;
+            --text-white: #ffffff;
+            --urgent-red: #e74c3c;
+            --border-muted: #2e3650;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-white);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #app-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        /* Elements from Screenshots */
+        .urgent-badge {
+            background-color: var(--urgent-red);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin: 15px 0;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-muted);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .btn-main {
+            background-color: var(--neon-green);
+            color: #000;
+            border: none;
+            padding: 18px;
+            width: 100%;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 20px;
+        }
+
+        /* Quiz Layout */
+        .round-header { color: var(--neon-green); font-weight: bold; letter-spacing: 1px; }
+        
+        .progress-bar {
+            height: 6px;
+            background: #2e3650;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-fill { height: 100%; background: var(--neon-green); width: 0%; transition: 0.5s; }
+
+        .letter-slots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+        .slot {
+            width: 45px;
+            height: 50px;
+            border: 2px solid var(--border-muted);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: #1c223a;
+        }
+        .slot.filled { border-color: var(--neon-green); color: var(--neon-green); }
+
+        .option-btn {
+            background: #252c48;
+            border: 1px solid var(--border-muted);
+            color: white;
+            padding: 15px;
+            margin: 10px 0;
+            width: 100%;
+            border-radius: 12px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+        }
+        .option-num {
+            background: var(--neon-green);
+            color: black;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    
+    <div id="screen-start">
+        <div style="margin-bottom: 30px;">
+            <img src="https://cdn-icons-png.flaticon.com/512/1067/1067357.png" width="80" style="filter: invert(70%) sepia(85%) saturate(380%) hue-rotate(85deg);">
+            <h1 style="letter-spacing: 3px; margin-top: 10px;">OPÉRATION</h1>
+            <h2 style="color: var(--neon-green); margin-top: -10px;">COFFRE-FORT FRANCOPHONE</h2>
+        </div>
+        <div class="urgent-badge">⚠️ URGENT</div>
+        <p style="color: #a0a8c0;">Le trésor culturel francophone est en danger. Votre mission : décrypter le code d'accès.</p>
+        <button class="btn-main" onclick="showScreen('screen-intro')">Accepter la mission</button>
+    </div>
+
+    <div id="screen-intro" class="hidden">
+        <h2 style="color: var(--urgent-red);">⚠️ AVIS URGENT</h2>
+        <div class="card">
+            <h4 style="color: var(--neon-green); margin-top:0;">ATTENTION, AGENTS!</h4>
+            <p style="font-size: 0.9rem; line-height: 1.4;">Le système de sécurité central de l'Organisation Internationale de la Francophonie a été compromis. Le trésor culturel a été verrouillé dans un coffre-fort numérique crypté.</p>
+        </div>
+        <div class="card" style="border-color: #f1c40f;">
+            <h4 style="color: #f1c40f; margin-top:0;">📋 INSTRUCTIONS</h4>
+            <p style="font-size: 0.85rem;">🔄 <b>SYNCHRONISATION:</b> Répondez aux questions pour débloquer les fragments.</p>
+            <p style="font-size: 0.85rem;">🔑 <b>EXTRACTION:</b> Chaque étape libérera une lettre du mot de passe.</p>
+        </div>
+        <button class="btn-main" onclick="startQuiz()">▶ Commencer la mission</button>
+    </div>
+
+    <div id="screen-quiz" class="hidden">
+        <div class="round-header">ROUND <span id="round-idx">1</span>/6</div>
+        <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+        
+        <div class="letter-slots" id="letter-slots">
+            <div class="slot">?</div><div class="slot">?</div><div class="slot">?</div>
+            <div class="slot">?</div><div class="slot">?</div><div class="slot">?</div>
+        </div>
+
+        <div class="card" style="text-align: center;">
+            <p id="question-text" style="font-size: 1.1rem; font-weight: 500;"></p>
+        </div>
+
+        <div id="options-box"></div>
+        <div style="margin-top: 20px; color: #f1c40f;">⭐ Score: <span id="score">0</span>/<span id="total-q">0</span></div>
+    </div>
+
+    <div id="screen-end" class="hidden">
+        <div style="background-color: #1a331a; padding: 40px 20px; border-radius: 20px;">
+            <div style="font-size: 4rem;">🏆</div>
+            <h1 style="color: #f1c40f;">MISSION ACCOMPLIE!</h1>
+            <div class="card" style="text-align: center; border: 2px solid #f1c40f;">
+                <p style="color: #f1c40f; font-size: 0.8rem; margin: 0;">CODE D'ACCÈS:</p>
+                <h1 style="font-size: 3rem; margin: 10px 0; letter-spacing: 5px;">AMITIÉ</h1>
+            </div>
+            <p>Félicitations, Agent! Le mot de passe signifie "Amitié" - le cœur de la Francophonie.</p>
+            <button class="btn-main" onclick="location.reload()">🔄 Rejouer</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const gameData = [
+        { q: "Combien de pays membres compte l'Organisation Internationale de la Francophonie (OIF) ?", a: ["54 pays", "88 pays", "120 pays", "32 pays"], c: 1, l: "A" },
+        { q: "Quelle ville accueille le siège de l'OIF ?", a: ["Genève", "Bruxelles", "Paris", "Montréal"], c: 2, l: "M" },
+        { q: "En quelle année a été créée l'Organisation Internationale de la Francophonie ?", a: ["1950", "1970", "1980", "1990"], c: 1, l: "I" },
+        { q: "Quel pays africain est le plus grand pays francophone par sa superficie ?", a: ["L'Algérie", "Le Mali", "La République Démocratique du Congo", "Le Niger"], c: 2, l: "T" },
+        { q: "Quel événement sportif majeur rassemble les athlètes francophones ?", a: ["Les Olympiades", "Les Jeux de la Francophonie", "Le Tournoi Francophone", "Les Championnats"], c: 1, l: "I" },
+        { q: "Quelle est la devise de la Francophonie ?", a: ["Liberté, Égalité, Fraternité", "Égalité, complémentarité, solidarité", "Unité dans la diversité", "Ensemble pour la paix"], c: 1, l: "É" }
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+    let collectedLetters = [];
+
+    function showScreen(id) {
+        document.querySelectorAll('#app-container > div').forEach(div => div.classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+    }
+
+    function startQuiz() {
+        showScreen('screen-quiz');
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const data = gameData[currentQ];
+        document.getElementById('round-idx').innerText = currentQ + 1;
+        document.getElementById('question-text').innerText = data.q;
+        document.getElementById('score').innerText = score;
+        document.getElementById('total-q').innerText = currentQ;
+        document.getElementById('progress-fill').style.width = ((currentQ / 6) * 100) + '%';
+        
+        const optionsBox = document.getElementById('options-box');
+        optionsBox.innerHTML = '';
+        data.a.forEach((opt, i) => {
+            optionsBox.innerHTML += `
+                <button class="option-btn" onclick="checkAnswer(${i})">
+                    <span class="option-num">${i+1}</span> ${opt}
+                </button>`;
+        });
+
+        // Update slots
+        const slots = document.querySelectorAll('.slot');
+        slots.forEach((slot, i) => {
+            if(collectedLetters[i]) {
+                slot.innerText = collectedLetters[i];
+                slot.classList.add('filled');
+            } else {
+                slot.innerText = "?";
+                slot.classList.remove('filled');
+            }
+        });
+    }
+
+    function checkAnswer(idx) {
+        if(idx === gameData[currentQ].c) {
+            collectedLetters.push(gameData[currentQ].l);
+            score++;
+            currentQ++;
+            if(currentQ < gameData.length) {
+                renderQuestion();
+            } else {
+                showScreen('screen-end');
+            }
+        } else {
+            alert("ERREUR : Code d'accès incorrect. Réessayez l'analyse.");
+        }
+    }
+</script>
+</body>
+</html>
